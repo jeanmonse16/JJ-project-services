@@ -2,8 +2,9 @@
   "name": "arquitectura-de-servicios",
   "version": "0.9.0",
   "description": "Armando la API que interactuara con todos los servicios que requiere el proyecto",
-  "main": "server.js",
+  "main": "api.js",
   "scripts": {
+    "dev": "set API_PORT=3010 && set MONGO_URL=mongodb://localhost:27017/jjproject && nodemon api/api",
     "test": "npm run test"
   },
   "keywords": [
