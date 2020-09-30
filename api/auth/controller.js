@@ -16,7 +16,7 @@ module.exports = (injectedStore) => {
 
                 if (!queryData) {
                     
-                    const emailHash =  await bcrypt.hash(user.email, 5)
+                    const emailHash = await bcrypt.hash(user.email, 5)
                     let newUser = {
                         email: user.email,
                         password: await bcrypt.hash(user.password, 5),
@@ -33,7 +33,6 @@ module.exports = (injectedStore) => {
                         .then(() => {
                             let response = {
                                 feedback: 'usuario creado!, por favor verifica tu email',
-                                /*key: jwtAuth.sign({...authUser}),*/
                                 email: newUser.email
                             }
                             resolve(response)

@@ -4,18 +4,22 @@ const schema = mongoose.Schema
 /* user schema */ 
 const userSchema = new schema({
     /*apiUser schema */
-    email: { type: String, unique: true },
+    email: { type: String, unique: true, sparse:true },
     password: String,
     active: Boolean,
     /* apiuser schema */
+
     /* facebook schema */
-    facebook_id: { type: String, unique: true },           
-    access_token: String,                     
-    firstName: String,
-    lastName: String,
+    facebook_id: String,                    
+    facebook_fullname: String,
+    facebook_picture: String,
     /* facebook schema */
+
     /*google schema */
-    google_id: { type: String, unique: true }
+    google_id: String,
+    google_given_name: String,
+    google_fullname: String,
+    google_picture: String
     /*google schema */
 })
 
@@ -66,7 +70,6 @@ const authHashSchema = new schema({
     user_id: { type: schema.Types.ObjectId, ref: 'User' }
 })
 
-
 const authHashModel = mongoose.model('authHash', authHashSchema)
 
 const addAuthHash = (hashData) => {
@@ -79,9 +82,7 @@ const addAuthHash = (hashData) => {
 module.exports = {
     addNewUser,
     addNewUserWithSocialMedia,
-    addAuthNewUser,
     addAuthHash,
     userModel,
-    authModel,
     authHashModel
 }

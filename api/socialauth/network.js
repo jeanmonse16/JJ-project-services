@@ -8,16 +8,28 @@ module.exports = passport => {
     controller.facebookAuth(passport)
     controller.googleAuth(passport)
 
-    router.get('/facebook',  passport.authenticate('facebook'))
+    router.get('/testfacebook',  passport.authenticate('facebook',{ scope: 'email' }))
 
-    router.get('/facebook/callback', passport.authenticate('facebook'), (req, res) => { 
-        globalResponse.success(req, res, req.user, 200 )
+    router.get('/testfacebook/callback', passport.authenticate('facebook'), (req, res) => { 
+        globalResponse.success(req, res, req.user, 200)
     })
 
-    router.get('/google', passport.authenticate('google', { scope: 'https://www.google.com/m8/feeds' }) )
+    router.get('/testgoogle', passport.authenticate('google', { scope: 'https://www.google.com/m8/feeds' }) )
 
-    router.get('google/callback', passport.authenticate('google'), (req, res) => {
+    router.get('testgoogle/callback', passport.authenticate('google'), (req, res) => {
         globalResponse.success(req, res, req.user, 200)
+    })
+
+    router.post('/facebook', (req, res) => {
+        controller.facebookSignIn(req.body.user)
+            .then(response => setTimeout(() => globalResponse.success(req, res, response, 200), 10000) )
+            .catch(error => globalResponse.error(req, res, error, 400))
+    })
+
+    router.post('/google', (req, res) => {
+        controller.googleSignIn(req.body.user)
+            .then(response => setTimeout(() => globalResponse.success(req, res, response, 200), 10000) )
+            .catch(error => globalResponse.error(req, res, error, 400))
     })
 
     return router

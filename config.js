@@ -25,5 +25,6 @@ module.exports = {
         appID: process.env.GOOGLE_APP_ID,
         appSecret: process.env.GOOGLE_APP_SECRET,
         callbackUrl: `http://localhost:${process.env.API_PORT}/users/socialauth/google/callback`
-    }
+    },
+    sessionSecret: process.env.SESSION_SECRET
 }
