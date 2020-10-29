@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs')
 const jwtAuth = require('../../auth_handlers')
 const mailman = require('../../mailman')
+const aliasGenerator = require('../../utils/aliasGenerator')
 
 module.exports = (injectedStore) => {
 
@@ -18,6 +19,7 @@ module.exports = (injectedStore) => {
                     
                     const emailHash = await bcrypt.hash(user.email, 5)
                     let newUser = {
+                        alias: aliasGenerator(),
                         email: user.email,
                         password: await bcrypt.hash(user.password, 5),
                         active: false
@@ -25,7 +27,7 @@ module.exports = (injectedStore) => {
 
                     await injectedStore.addNewUser(newUser, emailHash)
                     
-                    let link = `http://localhost:3000/activate-account?activation=${emailHash}`
+                    let link = `https://localhost:3000/activate-account?activation=${emailHash}`
                     let message = `Bienvenido a taskMaster, por favor activa tu cuenta !, activa tu cuenta con el siguiente link`
                     let htmlMessage = `<h1> Bienvenido a taskMaster, por favor activa tu cuenta ! </h1> <p> verifica tu cuenta haciendo click en "Verificar" </p> <br> <a href=${link} > Verificar </a>`
                     
@@ -89,17 +91,23 @@ module.exports = (injectedStore) => {
             if (queryData) {
                 try {
                     console.log(queryData)
-                    if (queryData.active){
+                    if (queryData.google_id || queryData.facebook_id) {
+                        reject('SOCIAL_SIGN_USER!!!')
+                    }
+
+                    else if (queryData.active){
                         bcrypt.compare(user.password, queryData.password)
-                        .then(isCorrect => {
-                            if (isCorrect) {
-                                resolve( jwtAuth.sign({ email: queryData.email }) )
-                            } else {
-                                reject('Credenciales inválidas, intentalo de nuevo')
-                            }
-                        })
-                        .catch(e => reject('ocurrio un error: ' + e))
-                    } else {
+                          .then(isCorrect => {
+                              if (isCorrect) {
+                                  resolve( jwtAuth.sign({ email: queryData.email }) )
+                               } else {
+                                  reject('Credenciales inválidas, intentalo de nuevo')
+                              }
+                          })
+                          .catch(e => reject('ocurrio un error: ' + e))
+                    } 
+                    
+                    else {
                         reject('the account has not been verified, please verify your account so you can start using our services!')
                     }
     
@@ -136,7 +144,7 @@ module.exports = (injectedStore) => {
 
                     else {
                         const emailHash = await injectedStore.authHashModel.findOne({ user_id: emailQueryResponse._id})
-                        let link = `http://localhost:3000/activate-account?activation=${emailHash.hash}`
+                        let link = `https://localhost:3000/activate-account?activation=${emailHash.hash}`
                         let message = `Por favor activa tu cuenta !, activa tu cuenta con el siguiente link`
                         let htmlMessage = `<h1> Por favor activa tu cuenta ! </h1> <p> verifica tu cuenta haciendo click en "Verificar" </p> <br> <a href=${link} > Verificar </a>`
                     

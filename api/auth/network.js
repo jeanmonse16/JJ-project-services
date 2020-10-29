@@ -11,17 +11,23 @@ router.post('/signup', (req, res) => {
         .catch(error => globalResponse.error(req, res, error, 400))
 })
 
-/* router.put('/verify-account/?hash') */
 router.put('/activate-account/:hash', (req, res, next) => {
     console.log(req.params.hash)
     controller.verify(req.params.hash)
-        .then(response => globalResponse.success(req, res, response, 200))
+        .then(response => {
+            req.session.key = response.key
+            globalResponse.success(req, res, response, 200)
+        })
         .catch(error => globalResponse.error(req, res, error, 500))
 })
 
 router.post('/login', (req, res) => {
     controller.login(req.body.user)
-        .then(response => globalResponse.success(req, res, response, 200))
+        .then(response => {
+            console.log(req)
+            req.session.key = response
+            globalResponse.success(req, res, response, 200)
+        })
         .catch(error => globalResponse.error(req, res, error, 400))
 })
 

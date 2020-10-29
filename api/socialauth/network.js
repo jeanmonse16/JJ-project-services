@@ -15,20 +15,25 @@ module.exports = passport => {
     })
 
     router.get('/testgoogle', passport.authenticate('google', { scope: 'https://www.google.com/m8/feeds' }) )
-
     router.get('testgoogle/callback', passport.authenticate('google'), (req, res) => {
         globalResponse.success(req, res, req.user, 200)
     })
 
     router.post('/facebook', (req, res) => {
         controller.facebookSignIn(req.body.user)
-            .then(response => setTimeout(() => globalResponse.success(req, res, response, 200), 10000) )
+            .then(response => {
+                req.session.key = response.key
+                globalResponse.success(req, res, response, 200)
+            })
             .catch(error => globalResponse.error(req, res, error, 400))
     })
 
     router.post('/google', (req, res) => {
         controller.googleSignIn(req.body.user)
-            .then(response => setTimeout(() => globalResponse.success(req, res, response, 200), 10000) )
+            .then(response => {
+                req.session.key = response.key
+                globalResponse.success(req, res, response, 200)
+            })
             .catch(error => globalResponse.error(req, res, error, 400))
     })
 

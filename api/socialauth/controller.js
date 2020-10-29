@@ -1,6 +1,7 @@
 const facebookStrategy = require('../../passport_strategies/facebook')
 const googleStrategy = require('../../passport_strategies/google')
 const jwt = require('../../auth_handlers/index')
+const aliasGenerator = require('../../utils/aliasGenerator')
 
 module.exports = store => {
     function facebookAuth(passport) {
@@ -16,7 +17,7 @@ module.exports = store => {
             let queryUser = await store.userModel.findOne({ facebook_id: user.facebook_id })
 
             if (!queryUser) {
-                const newFacebookUser = await store.userModel({...user})
+                const newFacebookUser = await store.userModel({...user, alias: aliasGenerator()})
                 newFacebookUser.save((error) => {
                     if (error) { reject('algo salió mal, intentalo de nuevo') }
 
@@ -35,7 +36,7 @@ module.exports = store => {
             let queryUser = await store.userModel.findOne({ google_id: user.google_id})
 
             if (!queryUser) {
-                const newGoogleUser = await store.userModel({...user})
+                const newGoogleUser = await store.userModel({...user, alias: aliasGenerator()})
                 newGoogleUser.save((error) => {
                     if (error) { reject('algo salió mal, intentalo de nuevo: ' + error) }
 

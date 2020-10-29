@@ -1,10 +1,12 @@
 const mongoose = require('mongoose')
 const schema = mongoose.Schema
+const aliasGenerator = require('../')
 
 /* user schema */ 
 const userSchema = new schema({
     /*apiUser schema */
-    email: { type: String, unique: true, sparse:true },
+    alias: { type: Number, unique: true, sparse: true },
+    email: { type: String, unique: true, sparse: true },
     password: String,
     active: Boolean,
     /* apiuser schema */
