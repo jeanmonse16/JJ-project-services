@@ -13,6 +13,27 @@ module.exports = (injectedStore) => {
                     email: user.email
                 }
 
+                if (user.password.length >= 8) {
+                    let mayuscula = false
+                    let minuscula = false
+                    let numero = false
+                    let caracterRaro = false
+                    for (let i = 0; i < user.password.length; i++) {
+                        if (user.password.charCodeAt(i) >= 65 && user.password.charCodeAt(i) <= 90) {
+                            mayuscula = true
+                        } else if (user.password.charCodeAt(i) >= 97 && user.password.charCodeAt(i) <= 122) {
+                            minuscula = true
+                        } else if (user.password.charCodeAt(i) >= 48 && user.password.charCodeAt(i) <= 57) {
+                            numero = true
+                        } else {
+                            caracterRaro = true
+                        }
+                    }
+                    if (!minuscula || !numero) {
+                        return reject({ message: 'Not a valid password', code: 400 })
+                    }
+                }
+
                 const queryData = await injectedStore.userModel.findOne(filter)
 
                 if (!queryData) {
@@ -22,31 +43,35 @@ module.exports = (injectedStore) => {
                         alias: aliasGenerator(),
                         email: user.email,
                         password: await bcrypt.hash(user.password, 5),
-                        active: false
+                        active: false,
+                        firstTime: true
                     }
 
-                    await injectedStore.addNewUser(newUser, emailHash)
+                    injectedStore.addNewUser(newUser, emailHash)
+                      .then(() => {
+                          let link = `https://localhost:3000/activate-account?activation=${emailHash}`
+                          let message = `Bienvenido a taskMaster, por favor activa tu cuenta !, activa tu cuenta con el siguiente link`
+                          let htmlMessage = `<h1> Bienvenido a taskMaster, por favor activa tu cuenta ! </h1> <p> verifica tu cuenta haciendo click en "Verificar" </p> <br> <a href=${link} > Verificar </a>`
+                        
+                          mailman(user.email, 'Bienvenido a taskMaster!', message, htmlMessage)
+                              .then(() => {
+                                  let response = {
+                                      feedback: 'usuario creado!, por favor verifica tu email',
+                                      email: newUser.email
+                                  }
+                                  resolve(response)
+                            })
+                              .catch(e => reject({ message: 'error al enviar correo de verificación', code: 500 }))
+                      })
+                      .catch(error => reject({ message: error, code: 500 }))
                     
-                    let link = `https://localhost:3000/activate-account?activation=${emailHash}`
-                    let message = `Bienvenido a taskMaster, por favor activa tu cuenta !, activa tu cuenta con el siguiente link`
-                    let htmlMessage = `<h1> Bienvenido a taskMaster, por favor activa tu cuenta ! </h1> <p> verifica tu cuenta haciendo click en "Verificar" </p> <br> <a href=${link} > Verificar </a>`
-                    
-                    mailman(user.email, 'Bienvenido a taskMaster!', message, htmlMessage)
-                        .then(() => {
-                            let response = {
-                                feedback: 'usuario creado!, por favor verifica tu email',
-                                email: newUser.email
-                            }
-                            resolve(response)
-                        })
-                        .catch(e => reject('error al enviar correo de verificación'))
 
                 } else {
-                    reject('something went wrong!, try again')
+                    reject({ message: 'something went wrong!, try again', code: 403 })
                 }
             }
             else {
-                reject('Debes ingresar un email y un password')
+                reject({ message: 'Debes ingresar un email y un password', code: 400 })
             }
         })
     }
@@ -68,7 +93,7 @@ module.exports = (injectedStore) => {
 
                 await injectedStore.authHashModel.deleteOne({ _id: hashQuery._id })
 
-                let token = jwtAuth.sign({ email: userToActivate.email })
+                let token = jwtAuth.sign({ email: userToActivate.email, alias: userToActivate.alias })
                 resolve({ feedback: 'the account has been activated!', key: token })
 
             } else {
@@ -92,31 +117,31 @@ module.exports = (injectedStore) => {
                 try {
                     console.log(queryData)
                     if (queryData.google_id || queryData.facebook_id) {
-                        reject('SOCIAL_SIGN_USER!!!')
+                        reject({ message: 'SOCIAL_SIGN_USER!!!', code: 409 })
                     }
 
                     else if (queryData.active){
                         bcrypt.compare(user.password, queryData.password)
                           .then(isCorrect => {
                               if (isCorrect) {
-                                  resolve( jwtAuth.sign({ email: queryData.email }) )
+                                  resolve( jwtAuth.sign({ email: queryData.email, alias: queryData.alias }) )
                                } else {
-                                  reject('Credenciales inválidas, intentalo de nuevo')
+                                  reject({message: 'Credenciales inválidas, intentalo de nuevo', code: 404 })
                               }
                           })
-                          .catch(e => reject('ocurrio un error: ' + e))
+                          .catch(e => reject({ message: 'ocurrio un error: ' + e, code: 500 }))
                     } 
                     
                     else {
-                        reject('the account has not been verified, please verify your account so you can start using our services!')
+                        reject({ message: 'the account has not been verified, please verify your account so you can start using our services!', code: 403 })
                     }
     
     
                 } catch (error) {
-                    reject(error)
+                    reject({ message: error, code: 500 })
                 }
             } else {
-                reject('incorrect credentials')
+                reject({ message: 'incorrect credentials', code: 404 })
             }
 
         })

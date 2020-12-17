@@ -5,14 +5,12 @@ const express =  require('express'),
 const router = express.Router()
 
 router.post('/signup', (req, res) => {
-    console.log(req.body.user)
     controller.register(req.body.user)
         .then(response => globalResponse.success(req, res, response, 200))
-        .catch(error => globalResponse.error(req, res, error, 400))
+        .catch(error => globalResponse.error(req, res, error.message, error.code))
 })
 
 router.put('/activate-account/:hash', (req, res, next) => {
-    console.log(req.params.hash)
     controller.verify(req.params.hash)
         .then(response => {
             req.session.key = response.key
@@ -24,11 +22,10 @@ router.put('/activate-account/:hash', (req, res, next) => {
 router.post('/login', (req, res) => {
     controller.login(req.body.user)
         .then(response => {
-            console.log(req)
             req.session.key = response
             globalResponse.success(req, res, response, 200)
         })
-        .catch(error => globalResponse.error(req, res, error, 400))
+        .catch(error => globalResponse.error(req, res, error.message, error.code))
 })
 
 router.get('/resendEmailForActivation/:email', (req, res) => {

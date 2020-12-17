@@ -1,30 +1,215 @@
 {
     "swagger": "2.0",
     "info": {
-      "description": "task-manager",
+      "description": "API FOR TASKMASTER CLIENT",
       "version": "1.0.0",
-      "title": "jj-project",
-      "termsOfService": "http://swagger.io/terms/",
-      "contact": {
-        "email": "apiteam@swagger.io"
-      }
+      "title": "TASKMASTER USERS",
+      "termsOfService": "http://swagger.io/terms/"
     },
-    "host": "localhost:3000",
-    "basePath": "/api",
+    "servers": [{ 
+      "url": "http://localhost:3010/users"
+    }],
     "tags": [
       {
-        "name": "user",
-        "description": "Operations about user",
-        "externalDocs": {
-          "description": "Operaciones sobre el usuario",
-          "url": "localhost:3000"
-        }
+        "name": "Auth",
+        "description": "User Authentication Services"
+      },
+      {
+        "name": "Social auth",
+        "description": "User Social Authentication Services"
+      },
+      {
+        "name": "Tasks",
+        "description": "User tasks"
+      },
+      {
+        "name": "Users",
+        "description": "User data Services"
       }
     ],
     "schemes": [
       "http"
     ],
-    "paths": {},
+    "paths": {
+      "/signup": {
+        "post": {
+          "tags": [
+            "Auth"
+          ],
+          "summary": "Register a new user",
+          "description": "Service for signing up new users",
+          "operationId": "sign-up-a-user",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "description": "user email",
+                      "example": "jose@gmail.com"
+                    },
+                    "password": {
+                      "type": "string",
+                      "description": "user password",
+                      "example": "jose123"
+                    }
+                  }
+                }
+              }           
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Succesfully created user!",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "required": ["email"],
+                    "properties": {
+                      "feedback": {
+                        "type": "string",
+                        "description": "succesful action message",
+                        "example": "succesfully created"
+                      },
+                      "email": {
+                        "type": "string",
+                        "description": "email of created user",
+                        "example": "mario@gmail.com"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description":"Bad request: not a valid payload"
+            },
+            "403": {
+              "description": "Already a user with these credentials"
+            },
+            "500": {
+              "description": "Internal error"
+            }
+          }
+        }
+      },
+      "/login": {
+        "post": {
+          "tags": [
+            "Auth"
+          ],
+          "summary": "Sign in a user",
+          "description": "Service for signing in a user",
+          "operationId": "sign in a user",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["user"],
+                  "properties":{
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "example": {
+                          "email": "jose@gmail.com",
+                          "password": "jose123"
+                        },
+                        "description": "Email and password required"
+                      }
+                    }
+                  }
+                }
+              }           
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Succesfully signed in user!",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "required": ["token"],
+                    "properties": {
+                      "token": {
+                        "type": "string",
+                        "description": "session key of user authenticated user",
+                        "example": "ejyahshae883238278w"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description":"Not verificated user account"
+            },
+            "404": {
+              "description": "user not found"
+            },
+            "409": {
+              "description": "this is a social-auth user!"
+            },
+            "500": {
+              "description": "Internal error"
+            }
+          }
+        },
+        "put": {
+          "tags": [
+            "Receptores"
+          ],
+          "summary": "Create un receptor",
+          "operationId": "createReceiver",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "mails"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Nombre del receptor",
+                      "example": "Acopio Circular"
+                    },
+                    "mails": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "example": "acopio@circular.com",
+                        "description": "Dirección de mail válida"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Operation Succesful!"
+            },
+            "400": {
+              "description": "Incorrect body request"
+            },
+            "401": {
+              "description": "Invalid Authorization Token"
+            }
+          }
+        }
+      }
+    },
     "securityDefinitions": {
       "petstore_auth": {
         "type": "oauth2",

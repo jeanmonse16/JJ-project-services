@@ -8,6 +8,8 @@ const express = require('express'),
     swaggerDoc = require('./swagger.json'),
     db = require('../db'),
     auth = require('./auth/network'),
+    users = require('./users/network'),
+    tasks = require('./tasks/network')
     app = express(),
     https = require('https'),
     fs = require('fs'),
@@ -23,7 +25,6 @@ app.use(
   })
 )
 
-console.log(Math.round(Math.random()*999999))
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 app.use(passport.initialize())
@@ -55,6 +56,9 @@ const socialAuth =  require('./socialauth/network')(passport)
 app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
 app.use('/users/auth', auth)
 app.use('/users/socialauth', socialAuth)
+app.use('/users/tasks', tasks)
+app.use('/users', users)
+app.use(config.cdn.publicRoute, express.static('public'))
 app.use('/jwt', (req, res) => {
     res.json({ message: 'holaaa'})
 })

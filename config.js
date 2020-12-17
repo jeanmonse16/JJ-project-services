@@ -1,6 +1,11 @@
 require('dotenv').config()
 
-module.exports = {
+const test = {}
+
+const production = {}
+
+module.exports = !process.env.MODE 
+  ? {
     api: {
         port: process.env.API_PORT || 3001
     },
@@ -26,5 +31,15 @@ module.exports = {
         appSecret: process.env.GOOGLE_APP_SECRET,
         callbackUrl: `http://localhost:${process.env.API_PORT}/users/socialauth/google/callback`
     },
-    sessionSecret: process.env.SESSION_SECRET
-}
+    sessionSecret: process.env.SESSION_SECRET,
+    cdn: {
+        port: process.env.PORT || 3010,
+        host: process.env.HOST || 'http://localhost',
+        publicRoute: process.env.PUBLIC_ROUTE || 'public/',
+        filesRoute: process.env.FILES_ROUTE || 'assets/taskfiles/'
+    }
+  }
+  : process.env === 'TEST'
+    ? test
+    : production
+ 
