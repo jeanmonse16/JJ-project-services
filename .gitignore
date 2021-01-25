@@ -3,3 +3,4 @@ package-lock.json
 .env
 server.cert
 server.key
+public/assets/taskfiles/
