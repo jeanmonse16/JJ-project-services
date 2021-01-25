@@ -35,7 +35,7 @@ module.exports = !process.env.MODE
     cdn: {
         port: process.env.PORT || 3010,
         host: process.env.HOST || 'http://localhost',
-        publicRoute: process.env.PUBLIC_ROUTE || 'public/',
+        publicRoute: process.env.PUBLIC_ROUTE || '/public',
         filesRoute: process.env.FILES_ROUTE || 'assets/taskfiles/'
     }
   }

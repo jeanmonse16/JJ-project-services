@@ -5,6 +5,7 @@
   "main": "api/api.js",
   "scripts": {
     "dev": "set API_PORT=3010 && nodemon api/api",
+    "files": "nodemon ./files.js",
     "test": "npm run test"
   },
   "keywords": [

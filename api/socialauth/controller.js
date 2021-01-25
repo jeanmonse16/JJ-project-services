@@ -18,16 +18,16 @@ module.exports = store => {
 
             if (!queryUser) {
                 const newFacebookUserAlias = aliasGenerator()
-                const newFacebookUser = await store.userModel({...user, alias: newFacebookUserAlias, firstTime: false})
+                const newFacebookUser = await store.userModel({...user, alias: newFacebookUserAlias, firstTime: true})
                 newFacebookUser.save((error) => {
                     if (error) { reject('algo salió mal, intentalo de nuevo') }
 
-                    resolve({ feedback: 'Succesful login!', key: jwt.sign({ email: user.facebook_email, alias: newFacebookUserAlias }) })
+                    resolve({ feedback: 'Succesful login!', key: jwt.sign({ email: user.email, alias: newFacebookUserAlias }) })
                 })
             } 
             
             else {
-                resolve({ feedback: 'the user exists', key: jwt.sign({ email: user.facebook_email, alias: queryUser.alias })})
+                resolve({ feedback: 'the user exists', key: jwt.sign({ email: user.email, alias: queryUser.alias })})
             }
         })
     }
@@ -38,16 +38,16 @@ module.exports = store => {
 
             if (!queryUser) {
                 const newGoogleUserAlias = aliasGenerator()
-                const newGoogleUser = await store.userModel({...user, alias: newGoogleUserAlias, firstTime: false})
+                const newGoogleUser = await store.userModel({...user, alias: newGoogleUserAlias, firstTime: true })
                 newGoogleUser.save((error) => {
                     if (error) { reject('algo salió mal, intentalo de nuevo: ' + error) }
 
-                    resolve({ feedback: 'Succesful login!', key: jwt.sign({ email: user.google_email, alias: newGoogleUserAlias }) })
+                    resolve({ feedback: 'Succesful login!', key: jwt.sign({ email: user.email, alias: newGoogleUserAlias }) })
                 })
             }
 
             else {
-                resolve({ feedback: 'the user exists', key: jwt.sign({ email: user.google_email, alias: queryUser.alias })})
+                resolve({ feedback: 'the user exists', key: jwt.sign({ email: user.email, alias: queryUser.alias })})
             }
         })
     }

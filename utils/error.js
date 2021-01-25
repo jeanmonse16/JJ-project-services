@@ -3,6 +3,7 @@ function error(message, code){
 
     if(code){
         e.statusCode = code
+        e.code = code
     }
 
     return e

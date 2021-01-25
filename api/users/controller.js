@@ -1,4 +1,7 @@
 const error = require('../../utils/error')
+const config = require('../../config')
+const jwtAuth = require('../../auth_handlers')
+const bcrypt = require('bcryptjs')
 
 module.exports = (injectedStore) => {
     const createTaskDateNotification = async (task, typeIndex) => {
@@ -17,7 +20,7 @@ module.exports = (injectedStore) => {
                     deleted_at: task.deleted_at,
                     taskTitle: task.title,
                     task_id: task.task_id,
-                    taskColumn: task.taskColumn,
+                    columnName: task.columnName,
                     seen: false,
                     type: 'onExpire'
                 }
@@ -35,7 +38,7 @@ module.exports = (injectedStore) => {
                     deleted_at: task.deleted_at,
                     taskTitle: task.title,
                     task_id: task.task_id,
-                    taskColumn: task.taskColumn,
+                    columnName: task.columnName,
                     seen: false,
                     type: 'onOneDayLeft'
                 }
@@ -53,7 +56,7 @@ module.exports = (injectedStore) => {
                     deleted_at: task.deleted_at,
                     taskTitle: task.title,
                     task_id: task.task_id,
-                    taskColumn: task.taskColumn,
+                    columnName: task.columnName,
                     seen: false,
                     type: 'onOneWeekLeft'
                 }
@@ -74,7 +77,7 @@ module.exports = (injectedStore) => {
                     deleted_at: task.deleted_at,
                     taskTitle: task.title,
                     task_id: task.task_id,
-                    taskColumn: task.taskColumn,
+                    columnName: task.columnName,
                     seen: false,
                     type: 'onExpire'
                 }
@@ -92,7 +95,7 @@ module.exports = (injectedStore) => {
                     deleted_at: task.deleted_at,
                     taskTitle: task.title,
                     task_id: task.task_id,
-                    taskColumn: task.taskColumn,
+                    columnName: task.columnName,
                     seen: false,
                     type: 'onOneDayLeft'
                 }
@@ -110,7 +113,7 @@ module.exports = (injectedStore) => {
                     deleted_at: task.deleted_at,
                     taskTitle: task.title,
                     task_id: task.task_id,
-                    taskColumn: task.taskColumn,
+                    columnName: task.columnName,
                     seen: false,
                     type: 'onOneWeekLeft'
                 }
@@ -132,6 +135,45 @@ module.exports = (injectedStore) => {
                 let profile, notifications = [], totalNotifications = []
                 let userTasks = await injectedStore.taskModel.find({ user_id: userData._id })
 
+                const getTaskColumns = async tasks => {
+                    let taskColumnsToReturn = []
+              
+                    Promise.all(
+                      tasks.map(async task => {
+                        if (!taskColumnsToReturn.find(taskColumn => taskColumn === task.columnName)) {
+                          const queryColumn = await injectedStore.columnModel.findOne({ name: task.columnName })
+                          if (queryColumn) {
+                            Promise.resolve(taskColumnsToReturn.push({
+                              id: queryColumn.tasks_id,
+                              name: task.columnName,
+                            }))
+                          } else {
+                            Promise.resolve({})
+                          }
+                        } else {
+                            Promise.resolve({})
+                        }
+                      })
+                    )
+              
+                    return taskColumnsToReturn
+                }
+
+                const taskColumns = await getTaskColumns(userTasks)
+                userTasks = userTasks.map(task => {
+                    if (taskColumns.find(taskColumn => taskColumn.name === task.columnName)) {
+                        return {
+                            ...task._doc,
+                            columnId: taskColumns.find(taskColumn => taskColumn.name === task.columnName).id
+                        }
+                    } else {
+                        return {
+                            ...task._doc,
+                            columnId: null
+                        }
+                    }
+                })
+
                 Promise.all( userTasks.map(async task => {
                     let taskNotifications = await injectedStore.taskNotificationModel.find({ task_id: task._id })
                     let newNotification
@@ -142,7 +184,7 @@ module.exports = (injectedStore) => {
                             deleted_at: task.deleted_at,
                             taskTitle: task.title,
                             task_id: task.task_id,
-                            taskColumn: task.taskColumn,
+                            columnName: task.columnName,
                             seen: taskNotification.seen || true,
                             type: taskNotification.type
                         }))
@@ -173,18 +215,19 @@ module.exports = (injectedStore) => {
                   .then(() => {
                       totalNotifications = totalNotifications.sort((a, b) => new Date(b.expiresDate) - new Date(a.expiresDate))
                   })
-                  .catch((e) => reject('Something went wrong: ' + e))
-
-                                
+                  .catch((e) => reject({ message: 'Something went wrong: ' + e, code: 404 }))   
 
                 if (userData.facebook_id || userData.google_id) {
                     profile = {
+                        username: userData.username,
                         alias: userData.alias,
                         tasks: userTasks || [],
                         notifications: totalNotifications.length ? totalNotifications.slice(0, 20) : [],
                         notSeenNotifications: notifications.filter(notification => !notification.seen).length,
-                        profileImage: userData.profile_image || null,
-                        firstTime: userData.firstTime || false
+                        profileImage: userData.profile_picture || null,
+                        firstTime: userData.firstTime || false,
+                        email: userData.email,
+                        socialMediaUser: true
                     }
 
                     if (userData.facebook_id) {
@@ -205,15 +248,36 @@ module.exports = (injectedStore) => {
                         tasks: userTasks || [],
                         notifications: totalNotifications.length ? totalNotifications.slice(0, 20) : [],
                         notSeenNotifications: notifications.filter(notification => !notification.seen).length,
-                        profileImage: userData.profile_image || null,
-                        firstTime: userData.firstTime || false
+                        profileImage: userData.profile_picture || null,
+                        firstTime: userData.firstTime || false,
+                        email: userData.email,
+                        socialMediaUser: false
                     }
     
                     resolve({ profile: profile })
                 }
 
             } else {
-                reject('Cannot find the user you requested')
+                reject({ message: 'Cannot find the user you requested', code: 404 })
+            }
+        })
+    }
+
+
+
+
+    function updateSessionKey(reqBody) {
+        return new Promise(async (resolve, reject) => {
+            if (reqBody.userEmail && reqBody.alias) {
+                let userQuery = await injectedStore.userModel.findOne({ alias: reqBody.alias })
+
+                userQuery
+                  ? resolve({ feedback: 'sessionKey updated!', key: jwtAuth.sign({ email: userQuery.email, alias: userQuery.alias }) })
+                  : reject({ message:'No user found', code: 404 })
+            }
+    
+            else {
+                reject({ message: 'no user alias or email found', code: 500 })
             }
         })
     }
@@ -247,15 +311,78 @@ module.exports = (injectedStore) => {
 
 
 
-    function endUserFirstTime({ userEmail, userAlias }) {
+    function updateUser (userUpdate) {
+        return new Promise (async (resolve, reject) => {
+            console.log('hola, empezando servicio')
+            let userToUpdate = await injectedStore.userModel.findOne({ alias: userUpdate.alias })
+
+            if (userToUpdate) {
+                
+                if (userUpdate.profileImage) {
+                    let newUserProfileImage = ''
+                    
+                    userUpdate.profileImage.originalname 
+                        ? newUserProfileImage = `${config.cdn.host}:${config.cdn.port}/${config.cdn.publicRoute}${config.cdn.filesRoute}${userUpdate.profileImage.originalname }`
+                        : newUserProfileImage = userUpdate.profileImage
+
+                    userToUpdate.profile_picture = newUserProfileImage
+                }
+
+                if (userUpdate.email) {
+                    userToUpdate.email = userToUpdate.email
+                }
+
+                if (userUpdate.username) {
+                    let usernameQuery = await injectedStore.userModel.findOne({ username: userUpdate.username }) 
+
+                    usernameQuery
+                        ? reject({ message: 'this username already exists', code: 409 })
+                        : userToUpdate.username = userUpdate.username
+                }
+
+                if (userUpdate.currentPassword) {
+                    bcrypt.compare(userUpdate.currentPassword, userToUpdate.password)
+                          .then(async (isCorrect) => {
+                              if (isCorrect) {
+                                  userToUpdate.password = await bcrypt.hash(userUpdate.newPassword, 5)
+                               } else {
+                                  reject({message: 'Credenciales inválidas, intentalo de nuevo', code: 404 })
+                              }
+                          })
+                          .catch(e => reject({ message: 'ocurrio un error: ' + e, code: 500 }))
+                }
+
+                console.log('casi termino amigo')
+
+                userToUpdate.save(err => {
+                    if (err)
+                        reject({ message: 'something went wrong', code: 500 })
+
+                    resolve({})
+                })
+
+            }
+
+            else {
+                reject({ message: 'User not found', code: 404 })
+            }
+        })
+    }
+
+
+
+
+    function endUserFirstTime(userAlias) {
         return new Promise(async (resolve, reject) => {
-            if (userEmail && userBody) {
+            if (userAlias) {
                 const requestedUser = await injectedStore.userModel.findOne({ alias: userAlias })
 
                 if (requestedUser) {
                     requestedUser.firstTime = false
+                    console.log(requestedUser)
                     requestedUser.save(err => {
                         if (err) {
+                            console.log(err)
                             reject('something went wrong')
                         }
 
@@ -272,7 +399,9 @@ module.exports = (injectedStore) => {
 
     return {
         getUserProfile,
+        updateSessionKey,
         updateUserNotifications,
+        updateUser,
         endUserFirstTime
     }
 }

@@ -25,8 +25,7 @@ function verify(token){
 const check = {
     own: (req, owner) => {
         const decoded = decodeHeader(req)
-        console.log(decoded)
-        if(decoded.alias !== owner){
+        if(Number(decoded.alias) !== Number(owner)){
             throw error('you cannot hace access to this resource', 401)
         }
 
@@ -35,7 +34,6 @@ const check = {
     },
     logged: (req) => {
         const decoded = decodeHeader(req)
-        console.log(decoded)
         if(!decoded.email) {
             throw error('No puedes acceder a este recurso', 401)
         }
@@ -47,10 +45,10 @@ const check = {
 
 function getToken(bearer){
     if(!bearer){
-        throw error('no vinó ningun token')
+        throw error('no vinó ningun token', 401)
     }
     if(bearer.indexOf('Bearer ') === -1){
-        throw error('formato de token invalido')
+        throw error('formato de token invalido', 401)
     }
     let token = bearer.replace('Bearer ', '')
     return token

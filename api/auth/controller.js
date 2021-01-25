@@ -124,7 +124,7 @@ module.exports = (injectedStore) => {
                         bcrypt.compare(user.password, queryData.password)
                           .then(isCorrect => {
                               if (isCorrect) {
-                                  resolve( jwtAuth.sign({ email: queryData.email, alias: queryData.alias }) )
+                                  resolve({ key: jwtAuth.sign({ email: queryData.email, alias: queryData.alias }) })
                                } else {
                                   reject({message: 'Credenciales inválidas, intentalo de nuevo', code: 404 })
                               }

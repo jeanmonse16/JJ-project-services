@@ -18,21 +18,10 @@ const userSchema = new schema({
     username: { 
         type: String, 
         default: null,
-        validate: {
-            validator: async function(v) {
-                if (v === null)
-                    return Promise.resolve('done!!!')
-
-                let searchedUsername = await userModel.findOne({ username: v })
-                if (searchedUsername)
-                    return Promise.reject('The username already exists')
-                else
-                    return Promise.resolve('done!!')
-            },
-            message: props => `username validation failed`
-        }
+        unique: true
      },
-    email: { type: String, 
+    email: { 
+        type: String, 
         unique: true, 
         sparse: true, 
         required: [true, 'An email is required!'],
@@ -146,13 +135,21 @@ const taskSchema = new schema({
     created_at: { type: Date, default: Date.now() },
     last_update: { type: Date, default: Date.now() },
     deleted_at: Date,
-    taskColumn: String,
+    columnName: String,
     state: String,
     expires_at: Date,
-    files: [String]
+    files: [Object]
 })
 
 const taskModel = mongoose.model('task', taskSchema)
+
+const columnSchema = new schema({
+    name: String,
+    tasks: Array,
+    tasks_id: { type: String, unique: true, sparse: true },
+})
+
+const columnModel = mongoose.model('column', columnSchema)
 
 const taskNotification = new schema({
     task_id: { type: schema.Types.ObjectId, ref: 'Task'  },
@@ -170,5 +167,6 @@ module.exports = {
     userModel,
     authHashModel,
     taskModel,
-    taskNotificationModel
+    taskNotificationModel,
+    columnModel
 }

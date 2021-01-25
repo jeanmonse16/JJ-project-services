@@ -13,6 +13,7 @@ const express = require('express'),
     app = express(),
     https = require('https'),
     fs = require('fs'),
+    path = require('path')
     MongoStore = require('connect-mongo')(session)
 
 db(config.localMongo.dbUrl)
@@ -58,10 +59,13 @@ app.use('/users/auth', auth)
 app.use('/users/socialauth', socialAuth)
 app.use('/users/tasks', tasks)
 app.use('/users', users)
-app.use(config.cdn.publicRoute, express.static('public'))
+app.use(config.cdn.publicRoute, express.static(path.join(process.cwd() + '/public')))
+app.use('/taskfiles', express.static(path.join(process.cwd() + '/public/assets/taskfiles')))
 app.use('/jwt', (req, res) => {
     res.json({ message: 'holaaa'})
 })
+
+console.log(path.join(process.cwd() + '/public'))
 
 app.get("/cookies", (req, res) => {
   req.session.count = req.session.count ? req.session.count + 1 : 1

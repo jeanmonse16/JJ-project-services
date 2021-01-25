@@ -18,17 +18,50 @@ const upload = multer({ storage: filesStorage })
 router.post('/', secure('profile'), upload.array('files', 4), (req, res) => {
 
     let newTask = {
-        files: req.files,
+        files: req.files || [],
         title: req.body.title,
         description: req.body.description,
-        taskColumn: req.body.taskColumn,
-        state: req.body.state
+        columnName: req.body.columnName,
+        state: req.body.state,
+        expires_at: req.body.expires_at
     }
     console.log('punto de control', req.files)
 
-    controller.createTask(newTask, req.body.user_id)
+    controller.createTask(newTask, req.body.userAlias)
       .then(response => GlobalResponse.success(req, res, response, 200))
-      .catch(error => GlobalResponse.error(req, res, error, 500))
+      .catch(error => GlobalResponse.error(req, res, error.message, error.code))
+})
+
+router.put('/:taskId', secure('profile'), (req, res) => {
+    console.log(req.params.taskId, req.body)
+    let taskToEdit = {
+        id: req.params.taskId,
+        title: req.body.title,
+        description: req.body.description,
+        columnName: req.body.columnName,
+        state: req.body.state,
+        expires_at: req.body.expires_at,
+        files: req.body.files
+    }
+
+    controller.updateTask(taskToEdit)
+      .then(response => GlobalResponse.success(req, res, response, 200))
+      .catch(error => GlobalResponse.error(req, res, error.message, error.code))
+})
+
+router.post('/upload', secure('profile'), function (req, res) {
+  upload.array('files', 4)(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      GlobalResponse.error(req, res, 'Could not upload the file, multer exception', 500)
+      // A Multer error occurred when uploading.
+    } else if (err) {
+      GlobalResponse.error(req, res, 'Could not upload the file', 500)
+      // An unknown error occurred when uploading.
+    }
+ 
+    GlobalResponse.success(req, res, 'File or files uploaded', 201)
+    // Everything went fine.
+  })
 })
 
 module.exports = router
