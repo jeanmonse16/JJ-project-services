@@ -10,7 +10,6 @@ module.exports = (passport, store) => {
             clientSecret: facebookAuth.appSecret,
             callbackURL: facebookAuth.callbackUrl
         }, async function( access_token, refresh_token, profile, done ) {
-            console.log(profile)
             await store.userModel.findOne(
                 { 'facebook_id': profile.id }, 
                 async (error, user) => {

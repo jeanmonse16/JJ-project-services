@@ -47,9 +47,9 @@ module.exports = (injectedStore) => {
                         firstTime: true
                     }
 
-                    injectedStore.addNewUser(newUser, emailHash)
+                    injectedStore.addNewUser(newUser, emailHash.replace(/[/]/g, 'x'))
                       .then(() => {
-                          let link = `https://localhost:3000/activate-account?activation=${emailHash}`
+                          let link = `https://localhost:3000/activate-account?activation=${emailHash.replace(/[/]/g, 'x')}`
                           let message = `Bienvenido a taskMaster, por favor activa tu cuenta !, activa tu cuenta con el siguiente link`
                           let htmlMessage = `<h1> Bienvenido a taskMaster, por favor activa tu cuenta ! </h1> <p> verifica tu cuenta haciendo click en "Verificar" </p> <br> <a href=${link} > Verificar </a>`
                         
@@ -115,7 +115,6 @@ module.exports = (injectedStore) => {
 
             if (queryData) {
                 try {
-                    console.log(queryData)
                     if (queryData.google_id || queryData.facebook_id) {
                         reject({ message: 'SOCIAL_SIGN_USER!!!', code: 409 })
                     }
@@ -245,7 +244,7 @@ module.exports = (injectedStore) => {
                 getUserToUpdatePassword.password = bcryptedPassword
                 getUserToUpdatePassword.save()
 
-                await injectedStore.authHashModel.delete({ _id: hashQuery.user_id })
+                await injectedStore.authHashModel.deleteOne({ _id: hashQuery.user_id })
 
                 resolve('you successfully updated the account password!')
             } else {

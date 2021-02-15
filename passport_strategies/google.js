@@ -17,7 +17,6 @@ module.exports = (passport, store) => {
                         return done(error)
 
                         if (user) {
-                            console.log(user)
                             let signedUser = jwtAuth.sign({ ...user})      
                             done(null, { token: signedUser, user: user })
                         }

@@ -29,7 +29,6 @@ router.post('/login', (req, res) => {
 })
 
 router.get('/resendEmailForActivation/:email', (req, res) => {
-    console.log(req.params.email)
     controller.resendEmailForVerification(req.params.email)
         .then(response => globalResponse.success(req, res, response, 200))
         .catch(error => globalResponse.error(req, res, error, 400))
@@ -38,7 +37,7 @@ router.get('/resendEmailForActivation/:email', (req, res) => {
 router.get('/checkForAccountVerification', (req, res) => {
     if (req.query.email) {
         controller.checkForAccountVerification(req.query.email)
-            .then(response => setTimeout( () => globalResponse.success(req, res, response, 200), 2000 ) )
+            .then(response => globalResponse.success(req, res, response, 200) )
             .catch(error => globalResponse.error(req, res, error, 400))
     } else {
         globalResponse.error(req, res, 'No email attached', 400)
@@ -52,8 +51,8 @@ router.post('/sendEmailForPasswordUpdate', (req, res) => {
 })
 
 router.put('/updatePassword/:hash', (req, res) => {
-    if (req.body.passwords.original === req.body.passwords.copy) {
-        controller.updatePassword(req.params.hash, req.body.passwords.original)
+    if (req.body.original === req.body.copy) {
+        controller.updatePassword(req.params.hash, req.body.original)
             .then(response => globalResponse.success(req, res, response, 200))
             .catch(error => globalResponse.error(req, res, error, 500))
     } else {

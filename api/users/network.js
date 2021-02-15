@@ -23,7 +23,7 @@ router.get('/updateSessionKey', secure('profile'), (req, res) => {
 
 router.get('/profile', secure('profile'), (req, res) => {
     controller.getUserProfile(req.body.userEmail)
-      .then(response => setTimeout(() => GlobalResponse.success(req, res, response, 200), 2000) )
+      .then(response => GlobalResponse.success(req, res, response, 200) )
       .catch(error => GlobalResponse.error(req, res, error.message, error.code))
 })
 

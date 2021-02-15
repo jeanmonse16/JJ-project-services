@@ -65,8 +65,6 @@ app.use('/jwt', (req, res) => {
     res.json({ message: 'holaaa'})
 })
 
-console.log(path.join(process.cwd() + '/public'))
-
 app.get("/cookies", (req, res) => {
   req.session.count = req.session.count ? req.session.count + 1 : 1
   req.session.data = 'jean'

@@ -25,7 +25,6 @@ router.post('/', secure('profile'), upload.array('files', 4), (req, res) => {
         state: req.body.state,
         expires_at: req.body.expires_at
     }
-    console.log('punto de control', req.files)
 
     controller.createTask(newTask, req.body.userAlias)
       .then(response => GlobalResponse.success(req, res, response, 200))
@@ -33,7 +32,6 @@ router.post('/', secure('profile'), upload.array('files', 4), (req, res) => {
 })
 
 router.put('/:taskId', secure('profile'), (req, res) => {
-    console.log(req.params.taskId, req.body)
     let taskToEdit = {
         id: req.params.taskId,
         title: req.body.title,

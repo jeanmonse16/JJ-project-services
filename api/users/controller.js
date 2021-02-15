@@ -313,7 +313,6 @@ module.exports = (injectedStore) => {
 
     function updateUser (userUpdate) {
         return new Promise (async (resolve, reject) => {
-            console.log('hola, empezando servicio')
             let userToUpdate = await injectedStore.userModel.findOne({ alias: userUpdate.alias })
 
             if (userToUpdate) {
@@ -322,7 +321,7 @@ module.exports = (injectedStore) => {
                     let newUserProfileImage = ''
                     
                     userUpdate.profileImage.originalname 
-                        ? newUserProfileImage = `${config.cdn.host}:${config.cdn.port}/${config.cdn.publicRoute}${config.cdn.filesRoute}${userUpdate.profileImage.originalname }`
+                        ? newUserProfileImage = `${config.cdn.host}:${config.cdn.port}${config.cdn.publicRoute}/${config.cdn.filesRoute}${userUpdate.profileImage.originalname }`
                         : newUserProfileImage = userUpdate.profileImage
 
                     userToUpdate.profile_picture = newUserProfileImage
@@ -341,7 +340,7 @@ module.exports = (injectedStore) => {
                 }
 
                 if (userUpdate.currentPassword) {
-                    bcrypt.compare(userUpdate.currentPassword, userToUpdate.password)
+                    await bcrypt.compare(userUpdate.currentPassword, userToUpdate.password)
                           .then(async (isCorrect) => {
                               if (isCorrect) {
                                   userToUpdate.password = await bcrypt.hash(userUpdate.newPassword, 5)
@@ -352,7 +351,6 @@ module.exports = (injectedStore) => {
                           .catch(e => reject({ message: 'ocurrio un error: ' + e, code: 500 }))
                 }
 
-                console.log('casi termino amigo')
 
                 userToUpdate.save(err => {
                     if (err)
@@ -379,7 +377,6 @@ module.exports = (injectedStore) => {
 
                 if (requestedUser) {
                     requestedUser.firstTime = false
-                    console.log(requestedUser)
                     requestedUser.save(err => {
                         if (err) {
                             console.log(err)
