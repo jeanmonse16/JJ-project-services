@@ -4,7 +4,9 @@
   "description": "Armando la API que interactuara con todos los servicios que requiere el proyecto",
   "main": "api/api.js",
   "scripts": {
-    "dev": "set API_PORT=3010 && nodemon api/api",
+    "localDev": "set API_PORT=3010 && nodemon api/api",
+    "dev": "set API_PORT=3010 && set MODE=dev&& nodemon api/api",
+    "master": "set API_PORT=3010 && set MODE=prod&& nodemon api/api",
     "files": "nodemon ./files.js",
     "test": "npm run test"
   },

@@ -16,11 +16,11 @@ const express = require('express'),
     path = require('path')
     MongoStore = require('connect-mongo')(session)
 
-db(config.localMongo.dbUrl)
+db(config.mongo.dbUrl)
 
 app.use(
   cors({
-    origin: 'https://localhost:3000',
+    origin:'https://localhost:3000',
     optionsSuccessStatus: 200,
     credentials: true
   })
@@ -36,7 +36,7 @@ app.use(
     secret: config.sessionSecret,
     cookie: { expires: new Date( Date.now() + 600000 ) },
     store: new MongoStore({
-      url: config.localMongo.dbUrl,
+      url: config.mongo.dbUrl,
       autoReconnect: true
     })
   })
