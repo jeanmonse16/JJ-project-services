@@ -4,3 +4,4 @@ package-lock.json
 server.cert
 server.key
 public/assets/taskfiles/
+.vercel
