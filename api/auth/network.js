@@ -28,6 +28,11 @@ router.post('/login', (req, res) => {
         .catch(error => globalResponse.error(req, res, error.message, error.code))
 })
 
+router.get('/login', (req, res) => {
+    res.json({ 'message': 'hola' })
+    res.end()
+})
+
 router.get('/resendEmailForActivation/:email', (req, res) => {
     controller.resendEmailForVerification(req.params.email)
         .then(response => globalResponse.success(req, res, response, 200))

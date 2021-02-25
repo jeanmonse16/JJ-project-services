@@ -82,3 +82,27 @@ module.exports = !process.env.MODE
   ? env['local']
   : env[process.env.MODE]
  
+/*"functions": {
+        "api/index.js": {
+          "memory": 3008,
+          "maxDuration": 60
+        },
+        "api/auth/index.js": {
+            "memory": 3008,
+            "maxDuration": 60
+        },
+        "api/tasks/index.js": {
+            "memory": 3008,
+            "maxDuration": 60
+        },
+        "api/users/index.js": {
+            "memory": 3008,
+            "maxDuration": 60
+        }
+    },
+    "redirects": [
+        { "source": "/api/auth(.*)", "destination": "/api/index.js" },
+        { "source": "/api/socialauth(.*)", "destination": "/api/index.js" },
+        { "source": "/api/tasks(.*)", "destination": "/api/index.js" },
+        { "source": "/api/users(.*)", "destination": "/api/index.js" }
+    ]*/

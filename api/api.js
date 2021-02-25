@@ -1,4 +1,5 @@
 const express = require('express'),
+    serverless = require('serverless-http'),
     session = require('express-session'),
     swaggerUi = require('swagger-ui-express'),
     passport = require('passport'),
@@ -54,31 +55,42 @@ app.use(
 
 const socialAuth =  require('./socialauth/network')(passport)
 
-app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
-app.use('/users/auth', auth)
-app.use('/users/socialauth', socialAuth)
-app.use('/users/tasks', tasks)
-app.use('/users', users)
-app.use(config.cdn.publicRoute, express.static(path.join(process.cwd() + '/public')))
-app.use('/taskfiles', express.static(path.join(process.cwd() + '/public/assets/taskfiles')))
-app.use('/jwt', (req, res) => {
-    res.json({ message: 'holaaa'})
-})
-
-app.get("/cookies", (req, res) => {
+/*app.get("/cookies", (req, res) => {
   req.session.count = req.session.count ? req.session.count + 1 : 1
   req.session.data = 'jean'
   res.cookie('jwt', '200').status(200).json({ hello: "world", counter: req.session.count, session: req.session.cookie })
-})
+})*/
 
 app.use(errors)
 
 const serverMessage = () => console.log(`App corriendo en el puerto ${config.api.port}`)
+
+if (process.env.MODE) {
+  app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
+  app.use('/users/auth', auth)
+  app.use('/users/socialauth', socialAuth)
+  app.use('/users/tasks', tasks)
+  app.use('/users', users)
+  app.use(config.cdn.publicRoute, express.static(path.join(process.cwd() + '/public')))
+  app.use('/taskfiles', express.static(path.join(process.cwd() + '/public/assets/taskfiles')))
+  app.listen(config.api.port, serverMessage)
+}
+
+else {
+  app.use('/.netlify/functions/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
+  app.use('/.netlify/functions/api/users/auth', auth)
+  app.use('/.netlify/functions/api/users/socialauth', socialAuth)
+  app.use('/.netlify/functions/api/users/tasks', tasks)
+  app.use('/.netlify/functions/api/users', users)
+  app.use(`/.netlify/functions/api/${config.cdn.publicRoute}`, express.static(path.join(process.cwd() + '/public')))
+  app.use('/.netlify/functions/api/taskfiles', express.static(path.join(process.cwd() + '/public/assets/taskfiles')))
+
+}
+
+module.exports.handler = serverless(app)
 
  /*para correrlo con https falso
 https.createServer({
     key: fs.readFileSync('server.key'),
     cert: fs.readFileSync('server.cert')
 }, app).listen(config.api.port, serverMessage) */
-  
-app.listen(config.api.port, serverMessage)

@@ -8,17 +8,6 @@ module.exports = passport => {
     controller.facebookAuth(passport)
     controller.googleAuth(passport)
 
-    router.get('/testfacebook',  passport.authenticate('facebook',{ scope: 'email' }))
-
-    router.get('/testfacebook/callback', passport.authenticate('facebook'), (req, res) => { 
-        globalResponse.success(req, res, req.user, 200)
-    })
-
-    router.get('/testgoogle', passport.authenticate('google', { scope: 'https://www.google.com/m8/feeds' }) )
-    router.get('testgoogle/callback', passport.authenticate('google'), (req, res) => {
-        globalResponse.success(req, res, req.user, 200)
-    })
-
     router.post('/facebook', (req, res) => {
         controller.facebookSignIn(req.body.user)
             .then(response => {
