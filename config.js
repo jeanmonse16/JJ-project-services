@@ -83,5 +83,3 @@ const env = {
 module.exports = !process.env.MODE 
   ? env['local']
   : env[process.env.MODE]
-
-console.log(process.env.MODE)

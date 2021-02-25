@@ -9,7 +9,7 @@
     "master": "set API_PORT=3010 && set MODE=prod&& nodemon api/api",
     "files": "nodemon ./files.js",
     "test": "npm run test",
-    "start": "set MODE=dev&& netlify-lambda serve api",
+    "start": "set MODE=dev&& netlify-lambda serve api -t 20",
     "build": "./node_modules/.bin/netlify-lambda build api"
   },
   "keywords": [

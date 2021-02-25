@@ -17,8 +17,7 @@ const userSchema = new schema({
     },
     username: { 
         type: String, 
-        default: null,
-        unique: true
+        default: null
      },
     email: { 
         type: String, 
