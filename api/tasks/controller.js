@@ -26,7 +26,7 @@ module.exports = injectedStore => {
 
                     const taskToStore = new injectedStore.taskModel({
                         ...newTask,
-                        ['files']: newTask.files ? newTask.files.map(file => `${config.cdn.host}:${config.cdn.port}/${config.cdn.publicRoute}${config.cdn.filesRoute}${file.originalname}`) : [],
+                        ['files']: newTask.files ? newTask.files.map(file => `${config.cdn.host}${config.cdn.port.length ? ':' + config.cdn.port : ''}${config.cdn.publicRoute}${config.cdn.filesRoute}${file.originalname}`) : [],
                         user_id: requestedUser._id,
                         task_id: createUUID().slice(0, 6)
                     })
@@ -70,7 +70,7 @@ module.exports = injectedStore => {
                     requestedTask.expires_at = taskToEdit.expires_at
                     requestedTask.columnName = taskToEdit.columnName
                     requestedTask.state = 'pending'
-                    requestedTask.files = taskToEdit.files ? taskToEdit.files.map(fileName => `${config.cdn.host}:${config.cdn.port}/taskfiles/${fileName}`) : []
+                    requestedTask.files = taskToEdit.files ? taskToEdit.files.map(fileName => `${config.cdn.host}${config.cdn.port.length ? ':' + config.cdn.port : ''}/taskfiles/${fileName}`) : []
     
                     requestedTask.save((err) => {
                         if (err) reject({ message: err, code: 500 })

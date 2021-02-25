@@ -21,7 +21,7 @@ db(config.mongo.dbUrl)
 
 app.use(
   cors({
-    origin:'https://localhost:3000',
+    origin: config.api.corsEnabledOrigin,
     optionsSuccessStatus: 200,
     credentials: true
   })
@@ -65,7 +65,7 @@ app.use(errors)
 
 const serverMessage = () => console.log(`App corriendo en el puerto ${config.api.port}`)
 
-if (process.env.MODE) {
+if (!process.env.MODE) {
   app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
   app.use('/users/auth', auth)
   app.use('/users/socialauth', socialAuth)
@@ -84,7 +84,6 @@ else {
   app.use('/.netlify/functions/api/users', users)
   app.use(`/.netlify/functions/api/${config.cdn.publicRoute}`, express.static(path.join(process.cwd() + '/public')))
   app.use('/.netlify/functions/api/taskfiles', express.static(path.join(process.cwd() + '/public/assets/taskfiles')))
-
 }
 
 module.exports.handler = serverless(app)

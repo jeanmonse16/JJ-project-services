@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs')
 const jwtAuth = require('../../auth_handlers')
+const config = require('../../config')
 const mailman = require('../../mailman')
 const aliasGenerator = require('../../utils/aliasGenerator')
 
@@ -49,7 +50,7 @@ module.exports = (injectedStore) => {
 
                     injectedStore.addNewUser(newUser, emailHash.replace(/[/]/g, 'x'))
                       .then(() => {
-                          let link = `https://localhost:3000/activate-account?activation=${emailHash.replace(/[/]/g, 'x')}`
+                          let link = `${config.api.corsEnabledOrigin}/activate-account?activation=${emailHash.replace(/[/]/g, 'x')}`
                           let message = `Bienvenido a taskMaster, por favor activa tu cuenta !, activa tu cuenta con el siguiente link`
                           let htmlMessage = `<h1> Bienvenido a taskMaster, por favor activa tu cuenta ! </h1> <p> verifica tu cuenta haciendo click en "Verificar" </p> <br> <a href=${link} > Verificar </a>`
                         
@@ -168,7 +169,7 @@ module.exports = (injectedStore) => {
 
                     else {
                         const emailHash = await injectedStore.authHashModel.findOne({ user_id: emailQueryResponse._id})
-                        let link = `https://localhost:3000/activate-account?activation=${emailHash.hash}`
+                        let link = `${config.api.corsEnabledOrigin}/activate-account?activation=${emailHash.hash}`
                         let message = `Por favor activa tu cuenta !, activa tu cuenta con el siguiente link`
                         let htmlMessage = `<h1> Por favor activa tu cuenta ! </h1> <p> verifica tu cuenta haciendo click en "Verificar" </p> <br> <a href=${link} > Verificar </a>`
                     
@@ -215,7 +216,7 @@ module.exports = (injectedStore) => {
 
                 await injectedStore.addAuthHash(hashData)
 
-                let link = `https://localhost:3000/updateYourPassword?update=${processedHash}`
+                let link = `${config.api.corsEnabledOrigin}/updateYourPassword?update=${processedHash}`
                     let message = `Hola de nuevo, accede a este link para cambiar tu contraseña!`
                     let htmlMessage = `<h1> Hola de nuevo, accede a este link para cambiar tu contraseña!</h1> <p> accede dando click en "Ir"</p> <br> <a href=${link} > Ir </a>`
                     

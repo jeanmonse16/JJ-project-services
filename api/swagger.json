@@ -6,9 +6,7 @@
       "title": "TASKMASTER USERS",
       "termsOfService": "http://swagger.io/terms/"
     },
-    "servers": [{ 
-      "url": "http://localhost:3010/users"
-    }],
+    "servers": [{ "url": "http://localhost:3010/users" }, { "url": "https://festive-heyrovsky-0aafff.netlify.app/.netlify/functions/api" }],
     "tags": [
       {
         "name": "Auth",

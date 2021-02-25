@@ -2,7 +2,8 @@ require('dotenv').config()
 
 const localDev = {
     api: {
-        port: process.env.API_PORT || 3001
+        port: process.env.API_PORT || 3001,
+        corsEnabledOrigin: 'https://localhost:3000',
     },
     mongo: {
         dbUrl: process.env.MONGO_URL || "mongodb://localhost:27017/taskmaster",
@@ -37,7 +38,8 @@ const localDev = {
 
 const dev = {
     api: {
-        port: process.env.API_PORT || 3001
+        port: process.env.API_PORT || 3001,
+        corsEnabledOrigin: 'https://jj-project-5cidzlalf.vercel.app'
     },
     mongo: {
         dbUrl: process.env.MONGO_URL || `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_USER_PASSWORD}@jj-project.n5ac8.mongodb.net/${process.env.MONGO_DB_NAME}?authSource=admin`,
@@ -64,8 +66,8 @@ const dev = {
     sessionSecret: process.env.SESSION_SECRET,
     cdn: {
         port: process.env.PORT || 3010,
-        host: process.env.HOST || 'http://localhost',
-        publicRoute: process.env.PUBLIC_ROUTE || '/public',
+        host: process.env.HOST || 'https://festive-heyrovsky-0aafff.netlify.app',
+        publicRoute: process.env.PUBLIC_ROUTE || '/.netlify/functions/api/public',
         filesRoute: process.env.FILES_ROUTE || 'assets/taskfiles/'
     }
 }
@@ -81,28 +83,5 @@ const env = {
 module.exports = !process.env.MODE 
   ? env['local']
   : env[process.env.MODE]
- 
-/*"functions": {
-        "api/index.js": {
-          "memory": 3008,
-          "maxDuration": 60
-        },
-        "api/auth/index.js": {
-            "memory": 3008,
-            "maxDuration": 60
-        },
-        "api/tasks/index.js": {
-            "memory": 3008,
-            "maxDuration": 60
-        },
-        "api/users/index.js": {
-            "memory": 3008,
-            "maxDuration": 60
-        }
-    },
-    "redirects": [
-        { "source": "/api/auth(.*)", "destination": "/api/index.js" },
-        { "source": "/api/socialauth(.*)", "destination": "/api/index.js" },
-        { "source": "/api/tasks(.*)", "destination": "/api/index.js" },
-        { "source": "/api/users(.*)", "destination": "/api/index.js" }
-    ]*/
+
+console.log(process.env.MODE)
