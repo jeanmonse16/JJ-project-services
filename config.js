@@ -3,7 +3,7 @@ require('dotenv').config()
 const localDev = {
     api: {
         port: process.env.API_PORT || 3001,
-        corsEnabledOrigin: 'https://localhost:3000',
+        corsWhitelist: ['https://localhost:3000'],
     },
     mongo: {
         dbUrl: process.env.MONGO_URL || "mongodb://localhost:27017/taskmaster",
@@ -39,7 +39,7 @@ const localDev = {
 const dev = {
     api: {
         port: process.env.API_PORT || 3001,
-        corsEnabledOrigin: 'https://jj-project-5cidzlalf.vercel.app'
+        corsWhitelist: ['https://jj-project-jvn7dyz1b-monserrateluisje.vercel.app', 'https://jj-project.vercel.app']
     },
     mongo: {
         dbUrl: process.env.MONGO_URL || `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_USER_PASSWORD}@jj-project.n5ac8.mongodb.net/${process.env.MONGO_DB_NAME}?authSource=admin`,

@@ -19,13 +19,19 @@ const express = require('express'),
 
 db(config.mongo.dbUrl)
 
-app.use(
-  cors({
-    origin: config.api.corsEnabledOrigin,
-    optionsSuccessStatus: 200,
-    credentials: true
-  })
-)
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (config.api.corsWhitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  optionsSuccessStatus: 200,
+  credentials: true
+}
+
+app.use( cors(corsOptions) )
 
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
