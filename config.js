@@ -39,7 +39,7 @@ const localDev = {
 const dev = {
     api: {
         port: process.env.API_PORT || 3001,
-        corsWhitelist: ['https://jj-project-jvn7dyz1b-monserrateluisje.vercel.app', 'https://jj-project.vercel.app']
+        corsWhitelist: ['https://jj-project.vercel.app', 'https://jj-project-jvn7dyz1b-monserrateluisje.vercel.app']
     },
     mongo: {
         dbUrl: process.env.MONGO_URL || `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_USER_PASSWORD}@jj-project.n5ac8.mongodb.net/${process.env.MONGO_DB_NAME}?authSource=admin`,
