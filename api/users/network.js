@@ -6,7 +6,7 @@ const controller = require('./index')
 
 const filesStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public/assets/taskfiles/')
+    cb(null, `public/assets/taskfiles/`)
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname)

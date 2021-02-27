@@ -88,7 +88,7 @@ else {
   app.use('/.netlify/functions/api/users/socialauth', socialAuth)
   app.use('/.netlify/functions/api/users/tasks', tasks)
   app.use('/.netlify/functions/api/users', users)
-  app.use('/static', express.static(path.join(process.cwd() + '/static')))
+  app.use(config.cdn.publicRoute, express.static(path.join(process.cwd() + '/static')))
   app.use('/taskfiles', express.static(path.join(process.cwd() + '/static/assets/taskfiles')))
 }
 
