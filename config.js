@@ -67,7 +67,7 @@ const dev = {
     cdn: {
         port: process.env.PORT || 3010,
         host: process.env.HOST || 'https://festive-heyrovsky-0aafff.netlify.app',
-        publicRoute: process.env.PUBLIC_ROUTE || '/.netlify/functions/api/public',
+        publicRoute: process.env.PUBLIC_ROUTE || '/public',
         filesRoute: process.env.FILES_ROUTE || 'assets/taskfiles/'
     }
 }
