@@ -6,13 +6,5 @@
   from = "/public"
   to = "/public"
 
-[[redirects]]
-  from = "/public/assets"
-  to = "/public/assets"
-
-[[redirects]]
-  from = "/public/assets/taskfiles"
-  to = "/public/assets/taskfiles"
-
 [context.branch-deploy.environment]
   MODE = "dev"
