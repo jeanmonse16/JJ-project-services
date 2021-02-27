@@ -4,11 +4,11 @@
 
 [[redirects]]
   from = "/public"
-  to = "/static"
+  to = "/.netlify/functions/api"
 
 [[redirects]]
   from = "/public/assets/taskfiles"
-  to = "/static/assets/taskfiles"
+  to = "/.netlify/functions/api"
 
 [context.branch-deploy.environment]
   MODE = "dev"
