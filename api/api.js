@@ -88,8 +88,8 @@ else {
   app.use('/.netlify/functions/api/users/socialauth', socialAuth)
   app.use('/.netlify/functions/api/users/tasks', tasks)
   app.use('/.netlify/functions/api/users', users)
-  app.use(`/public`, express.static(path.join(process.cwd() + '/public')))
-  app.use('/public/assets/taskfiles', express.static(path.join(process.cwd() + '/public/assets/taskfiles')))
+  app.use('/static', express.static(path.join(process.cwd() + '/static')))
+  app.use('/taskfiles', express.static(path.join(process.cwd() + '/static/assets/taskfiles')))
 }
 
 module.exports.handler = serverless(app)

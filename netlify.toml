@@ -4,7 +4,11 @@
 
 [[redirects]]
   from = "/public"
-  to = "/public"
+  to = "/static"
+
+[[redirects]]
+  from = "/public/assets/taskfiles"
+  to = "/static/assets/taskfiles"
 
 [context.branch-deploy.environment]
   MODE = "dev"

@@ -68,7 +68,7 @@ const dev = {
         port: process.env.PORT || 3010,
         host: process.env.HOST || 'https://festive-heyrovsky-0aafff.netlify.app',
         publicRoute: process.env.PUBLIC_ROUTE || '/public',
-        filesRoute: process.env.FILES_ROUTE || 'assets/taskfiles/'
+        filesRoute: process.env.FILES_ROUTE || '/assets/taskfiles/'
     }
 }
 
