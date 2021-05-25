@@ -3,6 +3,8 @@ const multer = require('multer')
 const secure = require('./secure')
 const GlobalResponse = require('../../network_handlers/response')
 const controller = require('./index')
+const config = require('../../config')
+const s3 = require('../../network_handlers/s3')()
 
 const filesStorage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -13,6 +15,7 @@ const filesStorage = multer.diskStorage({
   }
 })
 
+const uploadFile = s3.uploadFile()
 const upload = multer({ storage: filesStorage })
 
 router.get('/updateSessionKey', secure('profile'), (req, res) => {
@@ -36,7 +39,8 @@ router.put('/updateUserNotifications', secure('profile'), (req, res) => {
 router.put(
   '/updateUser', 
   secure('profile'),
-  upload.single('file'), 
+  //upload.single('file'), 
+  uploadFile.single('file'),
   (req, res) => {
       let userUpdate = {
         alias: req.body.alias,

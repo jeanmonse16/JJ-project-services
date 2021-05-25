@@ -3,6 +3,8 @@ const multer = require('multer')
 const controller = require('./index')
 const secure = require('../users/secure')
 const GlobalResponse = require('../../network_handlers/response')
+const config = require('../../config')
+const s3 = require('../../network_handlers/s3')()
 
 const filesStorage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -14,8 +16,9 @@ const filesStorage = multer.diskStorage({
 })
 
 const upload = multer({ storage: filesStorage })
+const uploadFiles = s3.uploadFile()
 
-router.post('/', secure('profile'), upload.array('files', 4), (req, res) => {
+router.post('/', secure('profile'), uploadFiles.array('files', 4), (req, res) => {
 
     let newTask = {
         files: req.files || [],
@@ -47,8 +50,14 @@ router.put('/:taskId', secure('profile'), (req, res) => {
       .catch(error => GlobalResponse.error(req, res, error.message, error.code))
 })
 
+router.delete('/:taskId', secure('profile'), (req, res) => {
+    controller.removeTask(req.params.taskId)
+      .then(response => GlobalResponse.success(req, res, response, 200))
+      .catch(error => GlobalResponse.error(req, res, error.message, error.code))
+})
+
 router.post('/upload', secure('profile'), function (req, res) {
-  upload.array('files', 4)(req, res, function (err) {
+  uploadFiles.array('files', 4)(req, res, function (err) {
     if (err instanceof multer.MulterError) {
       GlobalResponse.error(req, res, 'Could not upload the file, multer exception', 500)
       // A Multer error occurred when uploading.

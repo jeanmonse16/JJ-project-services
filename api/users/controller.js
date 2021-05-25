@@ -321,7 +321,7 @@ module.exports = (injectedStore) => {
                     let newUserProfileImage = ''
                     
                     userUpdate.profileImage.originalname 
-                        ? newUserProfileImage = `${config.cdn.host}${config.cdn.port.length ? ':' + config.cdn.port : ''}${config.cdn.publicRoute}${config.cdn.filesRoute}${userUpdate.profileImage.originalname }`
+                        ? newUserProfileImage = `${config.cdn.domain}${userUpdate.profileImage.originalname}`
                         : newUserProfileImage = userUpdate.profileImage
 
                     userToUpdate.profile_picture = newUserProfileImage

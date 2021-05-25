@@ -26,7 +26,7 @@ module.exports = injectedStore => {
 
                     const taskToStore = new injectedStore.taskModel({
                         ...newTask,
-                        ['files']: newTask.files ? newTask.files.map(file => `${config.cdn.host}${config.cdn.port.length ? ':' + config.cdn.port : ''}${config.cdn.publicRoute}${config.cdn.filesRoute}${file.originalname}`) : [],
+                        ['files']: newTask.files ? newTask.files.map(file => `${config.cdn.domain}${file.originalname}`) : [],
                         user_id: requestedUser._id,
                         task_id: createUUID().slice(0, 6)
                     })
@@ -70,7 +70,7 @@ module.exports = injectedStore => {
                     requestedTask.expires_at = taskToEdit.expires_at
                     requestedTask.columnName = taskToEdit.columnName
                     requestedTask.state = 'pending'
-                    requestedTask.files = taskToEdit.files ? taskToEdit.files.map(fileName => `${config.cdn.host}${config.cdn.port.length ? ':' + config.cdn.port : ''}/taskfiles/${fileName}`) : []
+                    requestedTask.files = taskToEdit.files ? taskToEdit.files.map(fileName => `${config.cdn.domain}${fileName}`) : []
     
                     requestedTask.save((err) => {
                         if (err) reject({ message: err, code: 500 })
@@ -86,8 +86,29 @@ module.exports = injectedStore => {
         })
     }
 
+    const removeTask = taskId => (
+        new Promise(async (resolve, reject) => {
+
+            if (!taskId)
+                reject({ message: 'there is no provided taskId', code: 400 })
+
+            const taskToRemove = await injectedStore.taskModel.findOne({ task_id: taskId })
+
+            if (!taskToRemove) 
+            
+                reject({ message: 'the task was not found', code: 404 })
+            
+            await injectedStore.taskModel.deleteOne({ task_id: taskId })
+              .then(response => {
+                  resolve('The task was succesfully removed')
+              })
+              .catch(err => reject({ message: err, code: 500 }))
+        })
+    )
+
     return {
         createTask,
-        updateTask
+        updateTask,
+        removeTask
     }
 }

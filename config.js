@@ -3,7 +3,7 @@ require('dotenv').config()
 const localDev = {
     api: {
         port: process.env.API_PORT || 3001,
-        corsWhitelist: ['https://localhost:3000'],
+        corsWhitelist: ['https://localhost:3000', '*'],
     },
     mongo: {
         dbUrl: process.env.MONGO_URL || "mongodb://localhost:27017/taskmaster",
@@ -29,10 +29,18 @@ const localDev = {
     },
     sessionSecret: process.env.SESSION_SECRET,
     cdn: {
+        domain: 'https://taskmaster-bucket.s3.us-east-2.amazonaws.com/',
         port: process.env.PORT || 3010,
         host: process.env.HOST || 'http://localhost',
         publicRoute: process.env.PUBLIC_ROUTE || '/public',
-        filesRoute: process.env.FILES_ROUTE || 'assets/taskfiles/'
+        filesRoute: process.env.FILES_ROUTE || '/assets/taskfiles/'
+    },
+    s3: {
+        bucketName: 'taskmaster-bucket',
+    },
+    aws: {
+        accessKeyId: process.env.AWS_BUCKET_ACCESS_KEY_ID,
+        profile: process.env.PROFILE
     }
 }
 
@@ -65,14 +73,56 @@ const dev = {
     },
     sessionSecret: process.env.SESSION_SECRET,
     cdn: {
-        port: process.env.PORT || 3010,
+        domain: 'https://taskmaster-bucket.s3.us-east-2.amazonaws.com/',
+        port: process.env.PORT,
         host: process.env.HOST || 'https://festive-heyrovsky-0aafff.netlify.app',
         publicRoute: process.env.PUBLIC_ROUTE || '/public',
         filesRoute: process.env.FILES_ROUTE || '/assets/taskfiles/'
+    },
+    s3: {
+        bucketName: 'taskmaster-bucket'
     }
 }
 
-const prod = {}
+const prod = {
+    api: {
+        port: process.env.API_PORT || 3001,
+        corsWhitelist: ['https://localhost:3000']
+    },
+    mongo: {
+        dbUrl: process.env.MONGO_URL || `mongodb://localhost:27017/taskmaster`,
+        host: process.env.MONGO_SERVICE_HOST || 'localhost',
+        port: process.env.MONGO_SERVICE_PORT || 27017
+    },
+    jwt: {
+        secret: process.env.JWT_SECRET || 'ultrasecretoxd'
+    },
+    mailAuth: {
+        email: process.env.EMAIL,
+        password: process.env.PASSWORD
+    },
+    facebookAuth: {
+        appID: process.env.FACEBOOK_APP_ID,
+        appSecret: process.env.FACEBOOK_APP_SECRET,
+        callbackUrl: `http://localhost:${process.env.API_PORT}/users/socialauth/facebook/callback`
+    },
+    googleAuth: {
+        appID: process.env.GOOGLE_APP_ID,
+        appSecret: process.env.GOOGLE_APP_SECRET,
+        callbackUrl: `http://localhost:${process.env.API_PORT}/users/socialauth/google/callback`
+    },
+    sessionSecret: process.env.SESSION_SECRET,
+    cdn: {
+        domain: 'https://taskmaster-bucket.s3.us-east-2.amazonaws.com/',
+        port: process.env.PORT || 9000,
+        host: process.env.HOST || 'http://localhost',
+        publicRoute: process.env.PUBLIC_ROUTE || '/public',
+        filesRoute: process.env.FILES_ROUTE || '/assets/taskfiles/'
+    },
+    s3: {
+        bucketName: 'taskmaster-bucket'
+    }
+}
 
 const env = {
   'local': localDev,

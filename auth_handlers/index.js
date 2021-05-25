@@ -16,6 +16,9 @@ function verify(token){
         else if (err && err.message === 'jwt malformed') {
             throw error('Invalid token', 401)
         }
+        else if (err) {
+            throw error('Damaged token: ' + err, 401)
+        }
         else {
             return decoded
         }

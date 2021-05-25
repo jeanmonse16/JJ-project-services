@@ -15,12 +15,52 @@ const express = require('express'),
     https = require('https'),
     fs = require('fs'),
     path = require('path')
-    MongoStore = require('connect-mongo')(session)
+    MongoStore = require('connect-mongo')(session),
+    AWS = require("aws-sdk")
 
 db(config.mongo.dbUrl)
 
+//const credentials = new AWS.SharedIniFileCredentials({profile: 'personal-account'})
+// const credentials = {
+//   expired: false,
+//   expireTime: null,
+//   refreshCallbacks: [],
+//   accessKeyId: config.aws.accessKeyId,
+//   sessionToken: undefined,
+//   filename: undefined,
+//   profile: config.aws.profile,
+//   disableAssumeRole: false,
+//   preferStaticCredentials: false,
+//   tokenCodeFn: null,
+//   httpOptions: null
+// }
+// AWS.config.credentials = credentials
+// console.log(AWS.config.credentials.accessKeyId, AWS.config.credentials)
+// AWS.config.getCredentials(function(err) {
+//   if (err) console.log(err.stack);
+//   // credentials not loaded
+//   else {
+//     console.log("Access key:", AWS.config.credentials.accessKeyId);
+//   }
+// });
+// s3 = new AWS.S3({
+//   apiVersion: '2006-03-01',
+// });
+
+// Call S3 to list the buckets
+// s3.listBuckets(function(err, data) {
+//   if (err) {
+//     console.log("Error", err);
+//   } else {
+//     console.log("Success", data.Buckets);
+//   }
+// });
+
 const corsOptions = {
   origin: function (origin, callback) {
+    //para trabajar con postman
+    // if (origin === undefined)
+    //   callback(null, true)
     if (config.api.corsWhitelist.indexOf(origin) !== -1) {
       callback(null, true)
     } else {
@@ -88,8 +128,8 @@ else {
   app.use('/.netlify/functions/api/users/socialauth', socialAuth)
   app.use('/.netlify/functions/api/users/tasks', tasks)
   app.use('/.netlify/functions/api/users', users)
-  app.use(config.cdn.publicRoute, express.static(path.join(process.cwd() + '/static')))
-  app.use('/taskfiles', express.static(path.join(process.cwd() + '/static/assets/taskfiles')))
+  app.use(config.cdn.publicRoute, express.static(path.join(process.cwd() + '/public')))
+  app.use('/taskfiles', express.static(path.join(process.cwd() + '/public/assets/taskfiles')))
 }
 
 module.exports.handler = serverless(app)
