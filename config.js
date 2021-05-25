@@ -80,7 +80,11 @@ const dev = {
         filesRoute: process.env.FILES_ROUTE || '/assets/taskfiles/'
     },
     s3: {
-        bucketName: 'taskmaster-bucket'
+        bucketName: 'taskmaster-bucket',
+    },
+    aws: {
+        accessKeyId: process.env.AWS_BUCKET_ACCESS_KEY_ID,
+        profile: process.env.PROFILE
     }
 }
 
@@ -120,7 +124,11 @@ const prod = {
         filesRoute: process.env.FILES_ROUTE || '/assets/taskfiles/'
     },
     s3: {
-        bucketName: 'taskmaster-bucket'
+        bucketName: 'taskmaster-bucket',
+    },
+    aws: {
+        accessKeyId: process.env.AWS_BUCKET_ACCESS_KEY_ID,
+        profile: process.env.PROFILE
     }
 }
 
