@@ -4,24 +4,12 @@ const fs = require('fs')
 const path = require('path')
 const multer = require('multer')
 const multerS3 = require('multer-s3')
+require('dotenv').config()
 
 module.exports = () => {
     //const credentials = new AWS.SharedIniFileCredentials({profile: 'personal-account'})
-    const credentials = {
-      expired: false,
-      expireTime: null,
-      refreshCallbacks: [],
-      accessKeyId: config.aws.accessKeyId,
-      sessionToken: undefined,
-      filename: undefined,
-      profile: config.aws.profile,
-      disableAssumeRole: false,
-      preferStaticCredentials: false,
-      tokenCodeFn: null,
-      httpOptions: null
-    }
-    AWS.config.credentials = credentials
-    s3 = new AWS.S3({
+    AWS.config.loadFromPath('./config.json')
+    const s3 = new AWS.S3({
         apiVersion: '2006-03-01'
     })
     const bucketName = config.s3.bucketName

@@ -39,7 +39,7 @@ const localDev = {
         bucketName: 'taskmaster-bucket',
     },
     aws: {
-        accessKeyId: process.env.AWS_BUCKET_ACCESS_KEY_ID,
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
         profile: process.env.PROFILE
     }
 }
@@ -83,7 +83,7 @@ const dev = {
         bucketName: 'taskmaster-bucket',
     },
     aws: {
-        accessKeyId: process.env.AWS_BUCKET_ACCESS_KEY_ID,
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
         profile: process.env.PROFILE
     }
 }
@@ -127,7 +127,7 @@ const prod = {
         bucketName: 'taskmaster-bucket',
     },
     aws: {
-        accessKeyId: process.env.AWS_BUCKET_ACCESS_KEY_ID,
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
         profile: process.env.PROFILE
     }
 }
