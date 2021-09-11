@@ -6,3 +6,4 @@ server.key
 public/assets/taskfiles/
 .vercel
 functions
+config.json
