@@ -9,7 +9,7 @@
     "testDev": "set API_PORT=9000 && set MODE=prod&& netlify-lambda serve api -t 20",
     "test": "set API_PORT=3010 && set MODE=prod&& nodemon api/api",
     "start": "set MODE=dev&& netlify-lambda serve api -t 20",
-    "build": "./node_modules/.bin/netlify-lambda build api && set MYENV=$AWS_ACCESS_KEY_ID"
+    "build": "./node_modules/.bin/netlify-lambda build api"
   },
   "keywords": [
     "nodejs",
