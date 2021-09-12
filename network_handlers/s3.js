@@ -8,7 +8,7 @@ require('dotenv').config()
 
 module.exports = () => {
     //const credentials = new AWS.SharedIniFileCredentials({profile: 'personal-account'})
-    AWS.config.loadFromPath('./config.json')
+    //AWS.config.loadFromPath('./config.json')
     const s3 = new AWS.S3({
         apiVersion: '2006-03-01'
     })
